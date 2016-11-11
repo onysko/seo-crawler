@@ -1,0 +1,4 @@
+# Close log files #
+
+*.csv
+.idea
