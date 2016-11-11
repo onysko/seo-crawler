@@ -62,7 +62,7 @@ class Crawler
     }
 
     /**
-     * Protect internal and system links.
+     * Protect empty and system links.
      *
      * @param $chunk array Collection of urls for clearing
      * @return array Updated collection
@@ -108,7 +108,7 @@ class Crawler
     }
 
     /**
-     * Parse map domain
+     * Parse map domain.
      */
     protected function domain()
     {
@@ -191,7 +191,7 @@ class Crawler
      */
     public function requestCallback($root, $url, $code, $data)
     {
-        if ($root === self::DEFAULT_ROOT) {
+        if ($root === self::DEFAULT_ROOT && $data !== null) {
             $this->process($url, $data, 'a');
         }
 
@@ -214,7 +214,7 @@ class Crawler
                 $this->log($this->e404_handler, [$url, $root]);
                 break;
             case '200':
-                if ($root === self::DEFAULT_ROOT) {
+                if ($root === self::DEFAULT_ROOT && $data !== null) {
                     $this->process($url, $data, 'a');
                 }
                 return true;

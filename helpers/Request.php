@@ -66,6 +66,8 @@ class Request
         } while ($exec == CURLM_CALL_MULTI_PERFORM);
 
         while ($active && $exec == CURLM_OK) {
+            while (curl_multi_exec($m, $active) === CURLM_CALL_MULTI_PERFORM);
+
             if (curl_multi_select($m) != -1) {
                 do {
                     $exec = curl_multi_exec($m, $active);
@@ -74,11 +76,16 @@ class Request
         }
 
         foreach ($descriptors as $url => $descriptor) {
-            $data = curl_multi_getcontent($descriptor);
             $code = curl_getinfo($descriptor, CURLINFO_HTTP_CODE);
 
+            $callbackParams = ['root' => $root, 'url' => $url, 'code' => $code];
+
+            $callbackParams['data'] = ($code == '200' && $root === Crawler::DEFAULT_ROOT) ?
+                curl_multi_getcontent($descriptor) :
+                null;
+
             // Call external handler
-            call_user_func_array($callback, ['root' => $root, 'url' => $url, 'code' => $code, 'data' => $data]);
+            call_user_func_array($callback, $callbackParams);
 
             // Remove cUrl handler from multi query
             curl_multi_remove_handle($m, $descriptor);
