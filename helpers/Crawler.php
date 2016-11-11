@@ -6,7 +6,6 @@
 
 namespace helpers;
 
-
 class Crawler
 {
     /** int Count of parallel cUrl descriptors */

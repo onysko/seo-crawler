@@ -6,7 +6,6 @@
 
 namespace helpers;
 
-
 class Request
 {
     /**
@@ -24,7 +23,7 @@ class Request
     }
 
     /**
-     * Create simple curl request.
+     * Create simple cUrl request.
      *
      * @param $url string Request url
      * @return mixed Response body
@@ -67,8 +66,6 @@ class Request
         } while ($exec == CURLM_CALL_MULTI_PERFORM);
 
         while ($active && $exec == CURLM_OK) {
-            while (curl_multi_exec($m, $active) === CURLM_CALL_MULTI_PERFORM);
-
             if (curl_multi_select($m) != -1) {
                 do {
                     $exec = curl_multi_exec($m, $active);
