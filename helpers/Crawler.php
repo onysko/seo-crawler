@@ -32,14 +32,13 @@ class Crawler
     /** @var string Domain for parsing internal links */
     protected $domain;
 
-    /** @var resource 301 HTTP code log handler */
-    protected $e301_handler;
-    /** @var resource 302 HTTP code log handler */
-    protected $e302_handler;
-    /** @var resource 403 HTTP code log handler */
-    protected $e403_handler;
-    /** @var resource 404 HTTP code log handler */
-    protected $e404_handler;
+    /** @var Config Configuration data */
+    protected $config;
+
+    /** @var resource HTTP error codes log handler */
+    protected $e_handler;
+    /** @var resource HTTP redirect codes log handler */
+    protected $r_handler;
 
     /**
      * Find links in source data.
@@ -72,10 +71,15 @@ class Crawler
         $clean = [];
 
         foreach ($chunk as $url) {
-            if ($url[0] == '/') {
-                $clean[] = $this->domain.$url;
+            if (empty($url) || $url[0] == '#') {
                 continue;
-            } elseif ($url[0] == '' || $url[0] == '#') {
+            }
+
+            if ($url[0] == '/') {
+                $url = $this->domain.$url;
+            }
+
+            if ($this->config->internalOnly && !substr_count($url, $this->domain)) {
                 continue;
             }
 
@@ -94,7 +98,7 @@ class Crawler
      */
     protected function chunk($data)
     {
-        return array_chunk($data, self::MULTI_CURL_HANDLERS);
+        return array_chunk($data, $this->config->streamCount);
     }
 
     /**
@@ -133,17 +137,18 @@ class Crawler
      *
      * @param $map string Path to root map
      * @param Request|null $request Request helper
+     * @param Config|null $config Configuration data
      */
-    public function __construct($map, $request = null)
+    public function __construct($map, $request = null, $config = null)
     {
         $this->map = $map;
         $this->request = isset($request) ? $request : new Request();
+        $this->config = isset($config) ? $config : Config::fromJson();
         $this->domain();
 
-        $this->e301_handler = fopen('log_301.csv', 'w');
-        $this->e302_handler = fopen('log_302.csv', 'w');
-        $this->e403_handler = fopen('log_403.csv', 'w');
-        $this->e404_handler = fopen('log_404.csv', 'w');
+
+        $this->e_handler = $this->config->errorLog ? fopen('error_log.csv', 'w') : null;
+        $this->r_handler = $this->config->redirectLog ? fopen('redirect_log.csv', 'w') : null;
     }
 
     /**
@@ -195,29 +200,21 @@ class Crawler
             $this->process($url, $data, 'a');
         }
 
-        $this->trace($code);
+        $this->trace($code.' - '.$url);
 
-        switch ($code) {
-            case '0':
-                $this->trace('NULL url '.$url.' root '.$root);
-                break;
-            case '301':
-                $this->log($this->e301_handler, [$url, $root]);
-                break;
-            case '302':
-                $this->log($this->e302_handler, [$url, $root]);
-                break;
-            case '403':
-                $this->log($this->e403_handler, [$url, $root]);
-                break;
-            case '404':
-                $this->log($this->e404_handler, [$url, $root]);
-                break;
-            case '200':
-                if ($root === self::DEFAULT_ROOT && $data !== null) {
-                    $this->process($url, $data, 'a');
-                }
-                return true;
+        if ($this->config->errorLog && in_array($code, Request::ERROR_CODES)) {
+            // cUrl errors hook
+            $code = $code == '0' ? 'cUrl error' : $code;
+            $this->log($this->e_handler, [$url, $root, $code]);
+        }
+
+        if ($this->config->redirectLog && in_array($code, Request::REDIRECT_CODES)) {
+            $this->log($this->r_handler, [$url, $root, $code]);
+        }
+
+        if ($code == '200' && $root === self::DEFAULT_ROOT && $data !== null) {
+            $this->process($url, $data, 'a');
+            return true;
         }
 
         return false;
