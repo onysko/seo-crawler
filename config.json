@@ -1,6 +1,7 @@
 {
   "errorLog": true,
-  "redirectLog": false,
-  "internalOnly": true,
-  "streamCount": 10
+  "redirectLog": true,
+  "internalOnly": false,
+  "streamCount": 10,
+  "excludeList": []
 }

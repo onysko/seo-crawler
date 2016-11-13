@@ -20,6 +20,9 @@ class Config
     /** @var int Count of parallel cUrl descriptors */
     public $streamCount;
 
+    /** @var array Collection of excluded url parts */
+    public $excludeList;
+
     /**
      * Check config file validity.
      *
@@ -28,7 +31,7 @@ class Config
      */
     public static function isValid($data)
     {
-        return is_bool($data['errorLog']) && is_bool($data['redirectLog']) && is_bool($data['internalOnly']) && is_integer($data['streamCount']);
+        return is_bool($data['errorLog']) && is_bool($data['redirectLog']) && is_bool($data['internalOnly']) && is_integer($data['streamCount']) && is_array($data['excludeList']);
     }
 
     /**
@@ -46,7 +49,8 @@ class Config
             $self->errorLog     = $config['errorLog'];
             $self->redirectLog  = $config['redirectLog'];
             $self->internalOnly = $config['internalOnly'];
-            $self->streamCount   = $config['streamCount'];
+            $self->streamCount  = $config['streamCount'];
+            $self->excludeList  = $config['excludeList'];
             return $self;
         } else {
             die('Please provide valid config.json');

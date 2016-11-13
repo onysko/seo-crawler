@@ -37,8 +37,20 @@ class Crawler
 
     /** @var resource HTTP error codes log handler */
     protected $e_handler;
+
     /** @var resource HTTP redirect codes log handler */
     protected $r_handler;
+
+    private function substr_count_array($haystack, $needle)
+    {
+        $count = 0;
+
+        foreach ($needle as $substring) {
+            $count += substr_count($haystack, $substring);
+        }
+
+        return $count;
+    }
 
     /**
      * Find links in source data.
@@ -80,6 +92,10 @@ class Crawler
             }
 
             if ($this->config->internalOnly && !substr_count($url, $this->domain)) {
+                continue;
+            }
+
+            if (!empty($this->config->excludeList) && substr_count($url, $this->config->excludeList)) {
                 continue;
             }
 
