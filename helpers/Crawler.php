@@ -95,7 +95,7 @@ class Crawler
                 continue;
             }
 
-            if (!empty($this->config->excludeList) && substr_count($url, $this->config->excludeList)) {
+            if (!empty($this->config->excludeList) && $this->substr_count_array($url, $this->config->excludeList)) {
                 continue;
             }
 
