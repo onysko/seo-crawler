@@ -4,7 +4,7 @@ Fast and easy tool for crawling buggy links from your sitemap.
 Just clone this repo, run ```php crawler.php http://example.com/sitemap.xml```, check created logs and improve your SEO quality.
 
 ## Configuration
-This module has few simple parameters. Using them you can manage speed of crawling and also include/exclude some reports.
+This module has few simple configuration parameters. Using them you can manage speed of crawling and also include/exclude some reports.
 
 Let's check them:
 
