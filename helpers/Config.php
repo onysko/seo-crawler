@@ -29,7 +29,7 @@ class Config
      * @param $data array Configuration data
      * @return bool Valid status
      */
-    public static function isValid($data)
+    public static function valid($data)
     {
         return is_bool($data['errorLog']) && is_bool($data['redirectLog']) && is_bool($data['internalOnly']) && is_integer($data['streamCount']) && is_array($data['excludeList']);
     }
@@ -44,7 +44,7 @@ class Config
         // Parse configuration file
         $config = json_decode(file_get_contents('config.json'), true);
 
-        if (self::isValid($config)) {
+        if (self::valid($config)) {
             $self = new Config();
             $self->errorLog     = $config['errorLog'];
             $self->redirectLog  = $config['redirectLog'];
