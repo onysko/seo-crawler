@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by Pavlo Onysko.
- * Date: 11/10/16
+ * Date: 11/10/16.
  */
 
 namespace helpers;
@@ -16,6 +16,7 @@ class Request
      * Create cUrl descriptor.
      *
      * @param $url string cUrl url parameter
+     *
      * @return resource Created descriptor with options
      */
     protected function create($url)
@@ -30,6 +31,7 @@ class Request
      * Create simple cUrl request.
      *
      * @param $url string Request url
+     *
      * @return mixed Response body
      */
     public function single($url)

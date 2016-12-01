@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by Pavlo Onysko.
- * Date: 11/10/16
+ * Date: 11/10/16.
  */
 
 namespace helpers;
@@ -13,8 +13,8 @@ class Crawler
 
     /** array Preg match rules */
     const PREG_RULES = [
-        'a'     => '#<a\s.*?(?:href=[\'"](.*?)[\'"]).*?>#is',
-        'loc'   => "'<loc>(.*?)</loc>'si"
+        'a' => '#<a\s.*?(?:href=[\'"](.*?)[\'"]).*?>#is',
+        'loc' => "'<loc>(.*?)</loc>'si",
     ];
 
     /** string Default analytics root */
@@ -57,6 +57,7 @@ class Crawler
      *
      * @param $data string Data for parsing
      * @param $rule string Preg match rule
+     *
      * @return array Unique links collection
      */
     protected function grep($data, $rule)
@@ -76,6 +77,7 @@ class Crawler
      * Protect empty and system links.
      *
      * @param $chunk array Collection of urls for clearing
+     *
      * @return array Updated collection
      */
     protected function clear($chunk)
@@ -153,7 +155,7 @@ class Crawler
      *
      * @param $map string Path to root map
      * @param Request|null $request Request helper
-     * @param Config|null $config Configuration data
+     * @param Config|null  $config  Configuration data
      */
     public function __construct($map, $request = null, $config = null)
     {
@@ -161,7 +163,6 @@ class Crawler
         $this->request = isset($request) ? $request : new Request();
         $this->config = isset($config) ? $config : Config::fromJson();
         $this->domain();
-
 
         $this->e_handler = $this->config->errorLog ? fopen('error_log.csv', 'w') : null;
         $this->r_handler = $this->config->redirectLog ? fopen('redirect_log.csv', 'w') : null;
@@ -178,7 +179,7 @@ class Crawler
 
         $this->trace('Crawling finished!');
         $this->trace('Total links crawled - '.count($this->links));
-        $this->trace('Total time: '.(microtime(true)-$time).'s');
+        $this->trace('Total time: '.(microtime(true) - $time).'s');
     }
 
     /**
@@ -230,6 +231,7 @@ class Crawler
 
         if ($code == '200' && $root === self::DEFAULT_ROOT && $data !== null) {
             $this->process($url, $data, 'a');
+
             return true;
         }
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by Pavlo Onysko.
- * Date: 13/10/16
+ * Date: 13/10/16.
  */
 
 namespace helpers;
@@ -27,6 +27,7 @@ class Config
      * Check config file validity.
      *
      * @param $data array Configuration data
+     *
      * @return bool Valid status
      */
     public static function valid($data)
@@ -45,12 +46,13 @@ class Config
         $config = json_decode(file_get_contents('config.json'), true);
 
         if (self::valid($config)) {
-            $self = new Config();
-            $self->errorLog     = $config['errorLog'];
-            $self->redirectLog  = $config['redirectLog'];
+            $self = new self();
+            $self->errorLog = $config['errorLog'];
+            $self->redirectLog = $config['redirectLog'];
             $self->internalOnly = $config['internalOnly'];
-            $self->streamCount  = $config['streamCount'];
-            $self->excludeList  = $config['excludeList'];
+            $self->streamCount = $config['streamCount'];
+            $self->excludeList = $config['excludeList'];
+
             return $self;
         } else {
             die('Please provide valid config.json');
